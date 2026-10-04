@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta name="theme-color" content="#f5f7fb">
+
+    <title>CashFlow Store</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+    <header>
+        <div class="top">
+            <div>
+                <div class="brand">D-TEAM CashFlow Store</div>
+                <div class="sub">
+                    Sistem Pencatatan Sales
+                </div>
+            </div>
+
+            <div class="date-pill" id="today"></div>
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- =========================
+             DASHBOARD
+        ========================== -->
+        <section id="dashboard" class="page active">
+
+            <div class="hero">
+
+                <small>
+                    Sales · Hari Ini
+                </small>
+
+                <div
+                    class="amount"
+                    id="dashCash">
+                    RM 0.00
+                </div>
+
+                <div class="stats">
+
+                    <div class="stat">
+                        <small>
+                            Pengeluaran Resit
+                        </small>
+
+                        <b id="dashReceipt">
+                            RM 0.00
+                        </b>
+                    </div>
+
+                    <div class="stat">
+                        <small>
+                            Balance
+                        </small>
+
+                        <b id="dashBalance">
+                            RM 0.00
+                        </b>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <h2>
+                Daily Sales per Kedai
+            </h2>
+
+            <div
+                id="dashOutlets"
+                class="grid">
+            </div>
+
+
+            <h2>
+                Aktivitas Hari Ini
+            </h2>
+
+            <div
+                id="todaySummary"
+                class="card">
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             DAFTAR KEDAI
+        ========================== -->
+        <section
+            id="outlets"
+            class="page">
+
+            <h2>
+                Daftar Kedai
+            </h2>
+
+            <button
+                class="btn primary"
+                onclick="openOutletForm()">
+
+                ＋ Tambah Kedai
+
+            </button>
+
+            <div style="height:10px"></div>
+
+            <div
+                id="outletList"
+                class="list">
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             DAILY SALES
+        ========================== -->
+        <section
+            id="daily"
+            class="page">
+
+            <h2>
+                Daily Sales
+            </h2>
+
+            <div class="form-card">
+
+                <label>
+                    Pilih Tanggal
+                </label>
+
+                <input
+                    type="date"
+                    id="dailyDate"
+                    onchange="renderDaily()">
+
+            </div>
+
+            <div id="dailyResult"></div>
+
+        </section>
+
+
+        <!-- =========================
+             HISTORY SALES
+        ========================== -->
+        <section
+            id="history"
+            class="page">
+
+            <h2>
+                History Sales
+            </h2>
+
+            <div class="form-card">
+
+                <label>
+                    Bulan
+                </label>
+
+                <input
+                    type="month"
+                    id="historyMonth"
+                    onchange="renderHistory()">
+
+            </div>
+
+            <div
+                id="historyList"
+                class="list">
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             RESIT
+        ========================== -->
+        <section
+            id="receipts"
+            class="page">
+
+            <h2>
+                Resit · Pengeluaran
+            </h2>
+
+            <div class="card">
+
+                <div class="row">
+
+                    <span>
+                        Total Pengeluaran
+                    </span>
+
+                    <b id="receiptTotal">
+                        RM 0.00
+                    </b>
+
+                </div>
+
+                <div
+                    class="muted"
+                    style="margin-top:7px">
+
+                    Resit selalu mengurangi Balance.
+
+                </div>
+
+            </div>
+
+            <div style="height:10px"></div>
+
+            <div
+                id="receiptList"
+                class="list">
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             INPUT SHIFT
+        ========================== -->
+        <section
+            id="inputShift"
+            class="page">
+
+            <button
+                class="back"
+                onclick="showPage('dashboard')">
+
+                ‹ Kembali
+
+            </button>
+
+            <h2>
+                Input Shift
+            </h2>
+
+
+            <div class="form-card">
+
+                <label>
+                    Kedai
+                </label>
+
+                <select id="shiftOutlet"></select>
+
+
+                <label>
+                    Shift
+                </label>
+
+                <div class="seg">
+
+                    <button
+                        type="button"
+                        id="pagiBtn"
+                        class="selected"
+                        onclick="setShift('Pagi')">
+
+                        ☀️ Pagi
+
+                    </button>
+
+                    <button
+                        type="button"
+                        id="malamBtn"
+                        onclick="setShift('Malam')">
+
+                        🌙 Malam
+
+                    </button>
+
+                </div>
+
+
+                <label>
+                    Tanggal
+                </label>
+
+                <input
+                    type="date"
+                    id="shiftDate">
+
+            </div>
+
+
+            <div class="form-card">
+
+                <label>
+                    Deposit
+                    <span class="muted">
+                        (Total uang masuk)
+                    </span>
+                </label>
+
+                <input
+                    id="deposit"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    oninput="calcShift()">
+
+
+                <label>
+                    Bank In
+                    <span class="muted">
+                        (Total customer transfer)
+                    </span>
+                </label>
+
+                <input
+                    id="bankIn"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    oninput="calcShift()">
+
+
+                <label>
+                    Voucher
+                    <span class="muted">
+                    </span>
+                </label>
+
+                <input
+                    id="voucher"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    oninput="calcShift()">
+
+
+                <div class="calc">
+
+                    <div class="muted">
+                        Cash
+                    </div>
+
+                    <div
+                        id="calcTotal"
+                        class="total">
+
+                        RM 0.00
+
+                    </div>
+
+                </div>
+
+
+                <label>
+                    Catatan
+                    <span class="muted">
+                        (Opsional)
+                    </span>
+                </label>
+
+                <textarea
+                    id="shiftNote"
+                    placeholder="Contoh: Setoran aman...">
+                </textarea>
+
+
+                <div class="actions">
+
+                    <button
+                        class="btn primary"
+                        onclick="saveShift()">
+
+                        Simpan Shift
+
+                    </button>
+
+                    <button
+                        class="btn secondary"
+                        onclick="resetShift()">
+
+                        Reset
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             INPUT RESIT
+        ========================== -->
+        <section
+            id="inputReceipt"
+            class="page">
+
+            <button
+                class="back"
+                onclick="showPage('receipts')">
+
+                ‹ Kembali
+
+            </button>
+
+            <h2>
+                Tambah Resit
+            </h2>
+
+
+            <div class="form-card">
+
+                <label>
+                    Tanggal
+                </label>
+
+                <input
+                    type="date"
+                    id="receiptDate">
+
+
+                <label>
+                    Kategori
+                </label>
+
+                <select id="receiptCategory">
+
+                    <option>
+                        Bahan Baku
+                    </option>
+
+                    <option>
+                        Barang
+                    </option>
+
+                    <option>
+                        Operasional
+                    </option>
+
+                    <option>
+                        Lainnya
+                    </option>
+
+                </select>
+
+
+                <label>
+                    Keterangan
+                </label>
+
+                <input
+                    id="receiptDesc"
+                    placeholder="Beli barang apa?">
+
+
+                <label>
+                    Jumlah (RM)
+                </label>
+
+                <input
+                    id="receiptAmount"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00">
+
+
+                <label>
+                    Tipe
+                </label>
+
+                <div class="seg">
+
+                    <button
+                        type="button"
+                        id="outletType"
+                        class="selected"
+                        onclick="setReceiptType('Outlet')">
+
+                        🏪 Kedai
+
+                    </button>
+
+                    <button
+                        type="button"
+                        id="globalType"
+                        onclick="setReceiptType('Global')">
+
+                        🌐 Global
+
+                    </button>
+
+                </div>
+
+
+                <div id="receiptOutletWrap">
+
+                    <label>
+                        Kedai
+                    </label>
+
+                    <select id="receiptOutlet"></select>
+
+                </div>
+
+
+                <div class="actions">
+
+                    <button
+                        class="btn primary"
+                        onclick="saveReceipt()">
+
+                        Simpan Resit
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         BOTTOM NAVIGATION
+    ========================== -->
+
+    <nav>
+
+        <button
+            id="nav-dashboard"
+            class="active"
+            onclick="showPage('dashboard')">
+
+            ⌂
+            <span>
+                Beranda
+            </span>
+
+        </button>
+
+
+        <button
+            id="nav-daily"
+            onclick="showPage('daily')">
+
+            ▣
+            <span>
+                Daily
+            </span>
+
+        </button>
+
+
+        <button
+            class="plus"
+            onclick="openAdd()">
+
+            ＋
+
+        </button>
+
+
+        <button
+            id="nav-history"
+            onclick="showPage('history')">
+
+            ▤
+            <span>
+                History
+            </span>
+
+        </button>
+
+
+        <button
+            id="nav-outlets"
+            onclick="showPage('outlets')">
+
+            •••
+            <span>
+                Kedai
+            </span>
+
+        </button>
+
+    </nav>
+
+
+    <!-- =========================
+         ADD MODAL
+    ========================== -->
+
+    <div
+        id="addModal"
+        class="modal"
+        onclick="if(event.target===this)closeAdd()">
+
+        <div class="sheet">
+
+            <h3>
+                Tambah Data
+            </h3>
+
+            <p class="muted">
+                Pilih data yang ingin dicatat.
+            </p>
+
+
+            <button
+                class="option"
+                onclick="closeAdd();showPage('inputShift')">
+
+                <span class="icon">
+                    🏪
+                </span>
+
+                <span>
+                    <strong>
+                        Input Stopmeter
+                    </strong>
+
+                    <small>
+                        Deposit, Bank In, Voucher
+                    </small>
+                </span>
+
+            </button>
+
+
+            <button
+                class="option"
+                onclick="closeAdd();showPage('inputReceipt')">
+
+                <span class="icon">
+                    🧾
+                </span>
+
+                <span>
+                    <strong>
+                        Input Resit
+                    </strong>
+
+                    <small>
+                        Pengeluaran 
+                    </small>
+                </span>
+
+            </button>
+
+
+            <button
+                class="option"
+                onclick="closeAdd();showPage('daily')">
+
+                <span class="icon">
+                    📊
+                </span>
+
+                <span>
+                    <strong>
+                        Daily Sales
+                    </strong>
+
+                    <small>
+                        Lihat penjualan berdasarkan tanggal
+                    </small>
+                </span>
+
+            </button>
+
+
+            <button
+                class="btn secondary"
+                style="margin-top:12px"
+                onclick="closeAdd()">
+
+                Batal
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         OUTLET MODAL
+    ========================== -->
+
+    <div
+        id="outletModal"
+        class="modal"
+        onclick="if(event.target===this)closeOutletForm()">
+
+        <div class="sheet">
+
+            <h3 id="outletFormTitle">
+                Tambah Kedai
+            </h3>
+
+
+            <div
+                class="form-card"
+                style="margin-top:12px">
+
+                <label>
+                    Nama Kedai
+                </label>
+
+                <input
+                    id="outletName"
+                    placeholder="Contoh: Kedai 7">
+
+
+                <div class="actions">
+
+                    <button
+                        class="btn primary"
+                        onclick="saveOutlet()">
+
+                        Simpan
+
+                    </button>
+
+                    <button
+                        class="btn secondary"
+                        onclick="closeOutletForm()">
+
+                        Batal
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOAST -->
+
+    <div
+        id="toast"
+        class="toast">
+    </div>
+
+</div>
+
+
+<script src="app.js"></script>
+
+</body>
+</html>
